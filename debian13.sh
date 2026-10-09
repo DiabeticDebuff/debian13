@@ -69,20 +69,26 @@ PY
 
 echo "==> Updating package lists..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get update
+apt update
 
 echo "==> Installing required packages..."
-apt-get install -y --no-install-recommends \
+apt install -y --no-install-recommends \
     qemu-guest-agent \
     curl \
-    git
+    git \
+    whois \
+    wget
+
+
+# Remove anything conflicting with docker
+sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-doc docker-buildx podman-docker containerd runc | cut -f1)
 
 echo "==> Enabling QEMU guest agent..."
 systemctl enable qemu-guest-agent.service
 systemctl start qemu-guest-agent.service
 
 echo "==> Cleaning package cache..."
-apt-get clean
+apt clean
 rm -rf /var/lib/apt/lists/*
 
 echo "==> Clearing system journal..."

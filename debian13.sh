@@ -94,10 +94,23 @@ find /var/log -type f \
     ! -path '/var/log/journal/*' \
     -exec truncate -s 0 {} +
 
+# Remove temporary files
+rm -rf /tmp/* /var/tmp/*
+
+# If using DHCP, remove leases
+rm -f /var/lib/dhcp/*.leases
+
+# Clear bash history
+history -c
+cat /dev/null > ~/.bash_history
+
+# Remove SSH host keys (will be regenerated on next boot)
+rm -f /etc/ssh/ssh_host_*
+
 echo "==> Resetting machine ID..."
-# Keep an empty machine-id file for systemd to initialize on next boot.
+# Clear the machine-id (will be regenerated on next boot)
 truncate -s 0 /etc/machine-id
-chmod 0444 /etc/machine-id
+rm -f /var/lib/dbus/machine-id
 
 # Restore the conventional Debian/DBus machine-id link.
 rm -f /var/lib/dbus/machine-id
